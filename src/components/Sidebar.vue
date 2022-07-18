@@ -16,13 +16,14 @@
 
 <script>
 import Avatar from './Avatar.vue';
+import Auth from '../apis/auth'
 
 export default {
   components: {Avatar},
 
   methods: {
     onLogout() {
-
+      Auth.logout()
     }
   }
 };
