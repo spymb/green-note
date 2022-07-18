@@ -17,12 +17,15 @@
 <script>
 import Avatar from './Avatar.vue';
 import Auth from '../apis/auth'
+import Bus from '../helpers/bus';
 
 export default {
   components: {Avatar},
 
   methods: {
     onLogout() {
+      Bus.$emit('userInfo', { username: '未登录' })
+
       Auth.logout()
         .then(() => this.$router.push({ path: 'login' }))
     }
