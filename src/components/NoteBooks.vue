@@ -1,7 +1,7 @@
 <template>
   <div class="detail" id="notebooks">
     <header>
-      <a href="#" class="btn"><i class="iconfont icon-plus"></i> 新建笔记本</a>
+      <a href="#" class="btn" @click.prevent="onCreate"><i class="iconfont icon-plus"></i> 新建笔记本</a>
     </header>
 
     <main>
@@ -12,8 +12,8 @@
             <div>
               <span class="iconfont icon-notebook"></span> {{ book.title }}
               <span>{{ book.noteCounts }}</span>
-              <span class="action">编辑</span>
-              <span class="action">删除</span>
+              <span class="action" @click.stop.prevent="onEditTitle(book)">编辑</span>
+              <span class="action" @click.stop.prevent="onDelete(book)">删除</span>
               <span class="date">{{ book.createdAt }}</span>
             </div>
           </router-link>
@@ -36,6 +36,41 @@ export default {
     }
   },
 
+  methods: {
+    onCreate() {
+      let title = window.prompt('创建笔记本')
+      if(title.trim() === '') {
+        alert('笔记本名不能为空')
+        return
+      }
+      Notebooks.add({ title })
+        .then(res => {
+          this.notebooks.unshift(res.data)
+          alert(res.msg)
+        })
+    },
+
+    onEditTitle(notebook) {
+      let title = window.prompt('修改标题', notebook.title)
+      Notebooks.update(notebook.id, { title })
+        .then(res => {
+          notebook.title = title
+          alert(res.msg)
+        })
+    },
+
+    onDelete(notebook) {
+      let isConfirm = window.confirm('你确定要删除吗?')
+      if(isConfirm) {
+        Notebooks.delete(notebook.id)
+          .then(res => {
+            this.notebooks.splice(this.notebooks.indexOf(notebook), 1)
+            alert(res.msg)
+          })
+      }
+    }
+  },
+
   created() {
     Auth.getInfo().then(res => {
         if(!res.isLogin) {
@@ -44,7 +79,6 @@ export default {
       })
     Notebooks.getAll()
       .then(res => {
-        console.log(res.data);
         this.notebooks = res.data
       })
   }
