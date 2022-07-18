@@ -14,7 +14,7 @@
               <span>{{ book.noteCounts }}</span>
               <span class="action" @click.stop.prevent="onEditTitle(book)">编辑</span>
               <span class="action" @click.stop.prevent="onDelete(book)">删除</span>
-              <span class="date">{{ book.createdAt }}</span>
+              <span class="date">{{ book.newCreatedAt }}</span>
             </div>
           </router-link>
         </div>
@@ -28,6 +28,7 @@
 <script>
 import Auth from '../apis/auth'
 import Notebooks from '../apis/notebooks'
+import {beautifyDate} from '../helpers/date';
 
 export default {
   data () {
@@ -45,6 +46,7 @@ export default {
       }
       Notebooks.add({ title })
         .then(res => {
+          res.data.newCreatedAt = beautifyDate(res.data.createdAt)
           this.notebooks.unshift(res.data)
           alert(res.msg)
         })
