@@ -2,14 +2,16 @@
   <div class="note-sidebar">
     <span class="btn add-note">添加笔记</span>
 
-    <el-dropdown class="notebook-title"  @command="handleCommand" placement="bottom">
+    <el-dropdown class="notebook-title" @command="handleCommand" placement="bottom">
       <span class="el-dropdown-link">
-        笔记本1 <i class="iconfont icon-down"></i>
+        {{ curBook.title }} <i class="iconfont icon-down"></i>
       </span>
 
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item  command="trash">回收站</el-dropdown-item>
-        <el-dropdown-item  command="trash">回收站</el-dropdown-item>
+        <el-dropdown-item v-for="notebook in notebooks" :command="notebook.id" :key="notebook.id">
+          {{ notebook.title }}
+        </el-dropdown-item>
+        <el-dropdown-item command="trash">回收站</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
 
@@ -19,10 +21,10 @@
     </div>
 
     <ul class="notes">
-      <li>
-        <router-link to="/notes">
-          <span class="date">八点半</span>
-          <span class="title">去喝酒</span>
+      <li v-for="note in notes">
+        <router-link :to="`/note?noteId=${note.id}&notebookId=${curBook.id}`">
+          <span class="date">{{note.newUpdatedAt}}</span>
+          <span class="title">{{note.title}}</span>
         </router-link>
       </li>
     </ul>
@@ -30,20 +32,47 @@
 </template>
 
 <script>
+import Notebooks from '../apis/notebooks';
+import Notes from '../apis/notes';
 
 export default {
+  data() {
+    return {
+      notebooks: [],
+      notes: [],
+      curBook: {}
+    };
+  },
 
   methods: {
-    handleCommand() {
-
-    }
+    handleCommand(notebookId) {
+      if(notebookId === 'trash') {
+        return this.$router.push({ path: '/trash'})
+      }
+      this.curBook = this.notebooks.find(notebook => notebook.id === notebookId)
+      Notes.getAll({ notebookId })
+        .then(res => {
+          this.notes = res.data
+        })
+    },
   },
-}
 
+  created() {
+    Notebooks.getAll()
+      .then(res => {
+        this.notebooks = res.data;
+        this.curBook = this.notebooks.find(notebook => notebook.id == this.$route.query.notebookId)
+          || this.notebooks[0] || {};
+        return Notes.getAll({notebookId: this.curBook.id});
+      })
+      .then(res => {
+        this.notes = res.data;
+      });
+  },
+};
 </script>
 
 
-<style lang="less" >
+<style lang="less">
 @import url(../assets/css/note-sidebar.less);
-
 </style>
