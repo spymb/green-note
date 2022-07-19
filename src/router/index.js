@@ -3,8 +3,8 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 import Login from '../components/Login';
 import NoteBooks from '../components/NoteBooks';
-import NoteDetails from '../components/NoteDetails';
-import TrashDetails from '../components/TrashDetails';
+import NoteDetails from '../components/Notes';
+import TrashDetails from '../components/Trash';
 
 Vue.use(Router)
 
