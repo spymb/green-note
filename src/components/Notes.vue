@@ -7,10 +7,10 @@
 
       <div class="note-detail" v-show="curNote.id">
         <div class="note-bar">
-          <span> 创建日期: {{ curNote.newCreatedAt }}</span>
-          <span> 更新日期: {{ curNote.newUpdatedAt }}</span>
+          <span> 创建时间: {{ curNote.newCreatedAt }}</span>
+          <span> 更新时间: {{ curNote.newUpdatedAt }}</span>
           <span> {{ statusText }}</span>
-          <span class="iconfont icon-delete"></span>
+          <span class="iconfont icon-delete" @click="deleteNote"></span>
           <span class="iconfont icon-fullscreen"></span>
         </div>
 
@@ -52,6 +52,15 @@ export default {
   },
 
   methods: {
+    deleteNote() {
+      Notes.delete({ noteId: this.curNote.id })
+        .then(data => {
+          this.$message.success(data.msg)
+          this.notes.splice(this.notes.indexOf(this.curNote), 1)
+          this.$router.replace({ path: `/note?/notebookId=${this.curNote.notebookId}` })
+        })
+    },
+
     updateNote: _.debounce(function () {
       Notes.update({noteId: this.curNote.id},
         {title: this.curNote.title, content: this.curNote.content})
