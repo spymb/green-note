@@ -11,7 +11,7 @@
           <span> 更新时间: {{ curNote.newUpdatedAt }}</span>
           <span> {{ statusText }}</span>
           <span class="iconfont icon-delete" @click="deleteNote"></span>
-          <span class="iconfont icon-fullscreen"></span>
+          <span class="iconfont icon-fullscreen" @click="isShowContent = !isShowContent"></span>
         </div>
 
         <div class="note-title">
@@ -21,10 +21,10 @@
         </div>
 
         <div class="editor">
-          <textarea v-model="curNote.content"
+          <textarea v-model="curNote.content" v-show="isShowContent"
                     @input="updateNote" @keydown="statusText='正在输入...'"
                     placeholder="请输入内容, 支持 markdown 语法"></textarea>
-          <div class="preview markdown-body"></div>
+          <div class="preview markdown-body" v-html="previewContent" v-show="!isShowContent"></div>
         </div>
       </div>
     </div>
@@ -37,6 +37,9 @@ import Auth from '../apis/auth';
 import Notes from '../apis/notes';
 import Bus from '../helpers/bus';
 import _ from 'lodash';
+import MarkdownIt from 'markdown-it';
+
+let md = new MarkdownIt();
 
 export default {
   components: {
@@ -48,17 +51,24 @@ export default {
       notes: [],
       curNote: {},
       statusText: '笔记未改动',
+      isShowContent: true
     };
+  },
+
+  computed: {
+    previewContent() {
+      return md.render(this.curNote.content || '');
+    }
   },
 
   methods: {
     deleteNote() {
-      Notes.delete({ noteId: this.curNote.id })
+      Notes.delete({noteId: this.curNote.id})
         .then(data => {
-          this.$message.success(data.msg)
-          this.notes.splice(this.notes.indexOf(this.curNote), 1)
-          this.$router.replace({ path: `/note?/notebookId=${this.curNote.notebookId}` })
-        })
+          this.$message.success(data.msg);
+          this.notes.splice(this.notes.indexOf(this.curNote), 1);
+          this.$router.replace({path: `/note?/notebookId=${this.curNote.notebookId}`});
+        });
     },
 
     updateNote: _.debounce(function () {
