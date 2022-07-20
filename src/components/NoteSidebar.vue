@@ -22,7 +22,7 @@
 
     <ul class="notes">
       <li v-for="note in notes">
-        <router-link :to="`/note?noteId=${note.id}&notebookId=${curBook.id}`">
+        <router-link :to="`/note?notebookId=${curBook.id}&noteId=${note.id}`">
           <span class="date">{{note.newUpdatedAt}}</span>
           <span class="title">{{note.title}}</span>
         </router-link>
@@ -34,6 +34,7 @@
 <script>
 import Notebooks from '../apis/notebooks';
 import Notes from '../apis/notes';
+import Bus from '../helpers/bus';
 
 export default {
   data() {
@@ -53,6 +54,7 @@ export default {
       Notes.getAll({ notebookId })
         .then(res => {
           this.notes = res.data
+          this.$emit('update:notes', this.notes)
         })
     },
   },
@@ -67,6 +69,8 @@ export default {
       })
       .then(res => {
         this.notes = res.data;
+        this.$emit('update:notes', this.notes)
+        Bus.$emit('update:notes', this.notes)
       });
   },
 };
