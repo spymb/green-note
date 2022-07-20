@@ -7,19 +7,23 @@
 
       <div class="note-detail" v-show="curNote.id">
         <div class="note-bar">
-          <span> 创建日期: {{curNote.newCreatedAt}}</span>
-          <span> 更新日期: {{curNote.newUpdatedAt}}</span>
-          <span>什么玩意</span>
+          <span> 创建日期: {{ curNote.newCreatedAt }}</span>
+          <span> 更新日期: {{ curNote.newUpdatedAt }}</span>
+          <span> {{ statusText }}</span>
           <span class="iconfont icon-delete"></span>
           <span class="iconfont icon-fullscreen"></span>
         </div>
 
         <div class="note-title">
-          <input type="text" v-model:value="curNote.title" placeholder="输入标题">
+          <input type="text" v-model="curNote.title"
+                 @input="updateNote" @keydown="statusText='正在输入...'"
+                 placeholder="请输入标题"/>
         </div>
 
         <div class="editor">
-          <textarea v-model:value="curNote.content" placeholder="输入内容, 支持 markdown 语法"></textarea>
+          <textarea v-model="curNote.content"
+                    @input="updateNote" @keydown="statusText='正在输入...'"
+                    placeholder="请输入内容, 支持 markdown 语法"></textarea>
           <div class="preview markdown-body"></div>
         </div>
       </div>
@@ -30,18 +34,35 @@
 <script>
 import NoteSidebar from './NoteSidebar';
 import Auth from '../apis/auth';
+import Notes from '../apis/notes';
 import Bus from '../helpers/bus';
+import _ from 'lodash';
 
 export default {
   components: {
     NoteSidebar
   },
 
-  data () {
+  data() {
     return {
       notes: [],
       curNote: {},
-    }
+      statusText: '笔记未改动',
+    };
+  },
+
+  methods: {
+    updateNote: _.debounce(function () {
+      Notes.update({noteId: this.curNote.id},
+        {title: this.curNote.title, content: this.curNote.content})
+        .then(() => {
+          this.statusText = '已保存';
+        })
+        .catch(() => {
+          this.statusText = '保存出错';
+        });
+
+    }, 300),
   },
 
   created() {
@@ -52,13 +73,13 @@ export default {
         }
       });
     Bus.$once('update:notes', notes => {
-      this.curNote = notes.find(note => note.id == this.$route.query.noteId) || {}
-    })
+      this.curNote = notes.find(note => note.id == this.$route.query.noteId) || {};
+    });
   },
 
-  beforeRouteUpdate (to, from, next) {
-    this.curNote = this.notes.find(note => note.id == to.query.noteId) || {}
-    next()
+  beforeRouteUpdate(to, from, next) {
+    this.curNote = this.notes.find(note => note.id == to.query.noteId) || {};
+    next();
   }
 };
 </script>
