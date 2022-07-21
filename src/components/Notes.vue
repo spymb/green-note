@@ -103,4 +103,10 @@ export default {
 
 <style lang="less">
 @import url(../assets/css/notes.less);
+#note {
+  display: flex;
+  align-items: stretch;
+  background-color: #fff;
+  flex: 1;
+}
 </style>
