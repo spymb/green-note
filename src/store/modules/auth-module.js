@@ -36,8 +36,7 @@ const actions = {
     return Auth.logout()
       .then(() => {
         router.push('/login');
-        commit('setUser', {user: '未登录'});
-        console.log(state.user);
+        commit('setUser', {user: {username: '未登录'}});
       });
   },
 

@@ -8,6 +8,16 @@ import TrashDetails from '../components/Trash';
 
 Vue.use(Router)
 
+const originalPush = Router.prototype.push
+const originalReplace = Router.prototype.replace;
+
+Router.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+Router.prototype.replace = function replace(location) {
+  return originalReplace.call(this, location).catch(e => e);
+}
+
 export default new Router({
   routes: [
     {

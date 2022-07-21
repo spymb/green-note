@@ -39,6 +39,7 @@ export default {
     ...mapGetters([
       'notebooks',
       'curBook',
+      'curNote',
       'notes',
     ])
   },
@@ -60,7 +61,16 @@ export default {
         return this.$router.push({path: '/trash'});
       }
       this.setCurBook({curBookId: notebookId});
-      this.getNotes({notebookId});
+      this.getNotes({notebookId}).then(() => {
+        this.setCurNote()
+        this.$router.replace({
+          path: '/note',
+          query: {
+            noteId: this.curNote.id,
+            notebookId: this.curBook.id
+          }
+        })
+      })
     },
 
     onAddNote() {
@@ -76,6 +86,13 @@ export default {
       })
       .then(() => {
         this.setCurNote({curNoteId: this.$route.query.noteId});
+        this.$router.replace({
+          path: '/note',
+          query: {
+            noteId: this.curNote.id,
+            notebookId: this.curBook.id
+          }
+        })
       });
   },
 };
