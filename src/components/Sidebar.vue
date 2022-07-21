@@ -24,10 +24,7 @@ export default {
 
   methods: {
     onLogout() {
-      Bus.$emit('userInfo', { username: '未登录' })
-
-      Auth.logout()
-        .then(() => this.$router.push({ path: 'login' }))
+      this.$store.dispatch('logout')
     }
   }
 };

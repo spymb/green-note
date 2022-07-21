@@ -42,8 +42,7 @@
 </template>
 
 <script>
-import Auth from '../apis/auth'
-import Bus from '../helpers/bus'
+import {mapActions} from 'vuex';
 
 export default {
   data() {
@@ -66,6 +65,11 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      loginUser: 'login',
+      registerUser: 'register'
+    }),
+
     showLogin() {
       this.isShowLogin = true;
       this.isShowRegister = false;
@@ -74,6 +78,7 @@ export default {
       this.isShowLogin = false;
       this.isShowRegister = true;
     },
+
     onRegister() {
       if (!/^[\w\u4e00-\u9fa5]{3,15}$/.test(this.register.username)) {
         this.register.isError = true;
@@ -86,21 +91,21 @@ export default {
         return;
       }
 
-      Auth.register({
+      this.registerUser({
         username: this.register.username,
         password: this.register.password
-      }).then(() => {
-        this.register.isError = false
-        this.register.notice = ''
-
-        Bus.$emit('userInfo', { username: this.login.username })
-
-        this.$router.push({ path: 'notebooks' })
-      }).catch(data => {
-        this.register.isError = true
-        this.register.notice = data.msg
       })
+        .then(() => {
+          this.register.isError = false;
+          this.register.notice = '';
+          this.$router.push({path: 'notebooks'});
+        })
+        .catch(data => {
+          this.register.isError = true;
+          this.register.notice = data.msg;
+        });
     },
+
     onLogin() {
       if (!/^[\w\u4e00-\u9fa5]{3,15}$/.test(this.login.username)) {
         this.login.isError = true;
@@ -113,20 +118,19 @@ export default {
         return;
       }
 
-      Auth.login({
+      this.loginUser({
         username: this.login.username,
         password: this.login.password
-      }).then(() => {
-        this.login.isError = false;
-        this.login.notice = '';
-
-        Bus.$emit('userInfo', { username: this.login.username })
-
-        this.$router.push({ path: 'notebooks' })
-      }).catch(data => {
-        this.login.isError = true
-        this.login.notice = data.msg
       })
+        .then(() => {
+          this.login.isError = false;
+          this.login.notice = '';
+          this.$router.push({path: 'notebooks'});
+        })
+        .catch(data => {
+          this.login.isError = true;
+          this.login.notice = data.msg;
+        });
     }
   }
 

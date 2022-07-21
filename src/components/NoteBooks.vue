@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import Auth from '../apis/auth';
 import {mapGetters, mapActions} from 'vuex';
 
 export default {
@@ -41,6 +40,7 @@ export default {
       'deleteNotebook',
       'updateNotebook',
       'getNotebooks',
+      'checkLogin'
     ]),
 
     onCreate() {
@@ -81,12 +81,7 @@ export default {
   },
 
   created() {
-    Auth.getInfo().then(res => {
-      if (!res.isLogin) {
-        this.$router.push({path: '/login'});
-      }
-    });
-
+    this.checkLogin('/login');
     this.getNotebooks();
   }
 };

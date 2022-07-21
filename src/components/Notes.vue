@@ -33,10 +33,9 @@
 
 <script>
 import NoteSidebar from './NoteSidebar';
-import Auth from '../apis/auth';
 import _ from 'lodash';
 import MarkdownIt from 'markdown-it';
-import { mapGetters, mapMutations, mapActions } from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex';
 
 let md = new MarkdownIt();
 
@@ -71,36 +70,32 @@ export default {
     ...mapActions([
       'deleteNote',
       'updateNote',
+      'checkLogin'
     ]),
 
     onDeleteNote() {
-      this.deleteNote({ noteId: this.curNote.id })
+      this.deleteNote({noteId: this.curNote.id})
         .then(() => {
-          this.$router.replace({ path: `/note?/notebookId=${this.curNote.notebookId}` })
-        })
+          this.$router.replace({path: `/note?/notebookId=${this.curNote.notebookId}`});
+        });
     },
 
     onUpdateNote: _.debounce(function () {
-      this.updateNote({ noteId: this.curNote.id, title: this.curNote.title, content: this.curNote.content })
+      this.updateNote({noteId: this.curNote.id, title: this.curNote.title, content: this.curNote.content})
         .then(() => {
-          this.statusText = '已保存'
+          this.statusText = '已保存';
         }).catch(() => {
-        this.statusText = '保存出错'
-      })
+        this.statusText = '保存出错';
+      });
     }, 300),
   },
 
   created() {
-    Auth.getInfo()
-      .then(res => {
-        if (!res.isLogin) {
-          this.$router.push({path: '/login'});
-        }
-      });
+    this.checkLogin('/login');
   },
 
   beforeRouteUpdate(to, from, next) {
-    this.setCurNote({ curNoteId: to.query.noteId})
+    this.setCurNote({curNoteId: to.query.noteId});
     next();
   }
 };

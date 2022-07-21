@@ -32,7 +32,6 @@
 </template>
 
 <script>
-import Notes from '../apis/notes';
 import {mapGetters, mapMutations, mapActions} from 'vuex';
 
 export default {
@@ -65,10 +64,7 @@ export default {
     },
 
     onAddNote() {
-      Notes.add({notebookId: this.curBook.id})
-        .then(() => {
-          this.addNote({notebookId: this.curBook.id});
-        });
+      this.addNote({notebookId: this.curBook.id});
     }
   },
 
