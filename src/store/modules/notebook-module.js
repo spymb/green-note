@@ -3,11 +3,17 @@ import { Message } from 'element-ui'
 
 const state = {
   notebooks: null,
+  curBookId: null
 }
 
 const getters = {
   notebooks: state => state.notebooks || [],
-}
+
+  curBook: state => {
+    if(!Array.isArray(state.notebooks)) return {}
+    if(!state.curBookId) return state.notebooks[0] || {}
+    return state.notebooks.find(notebook => notebook.id == state.curBookId) || {}
+  }}
 
 const mutations = {
   addNotebook(state, payload) {
@@ -26,6 +32,10 @@ const mutations = {
   setNotebooks(state, payload) {
     state.notebooks = payload.notebooks
   },
+
+  setCurBook(state, payload) {
+    state.curBookId = payload.curBookId
+  }
 }
 
 const actions = {

@@ -1,6 +1,6 @@
 <template>
   <div class="note-sidebar">
-    <span class="btn add-note" @click="addNote">添加笔记</span>
+    <span class="btn add-note" @click="onAddNote">添加笔记</span>
 
     <el-dropdown class="notebook-title" @command="handleCommand" placement="bottom">
       <span class="el-dropdown-link">
@@ -23,8 +23,8 @@
     <ul class="notes">
       <li v-for="note in notes">
         <router-link :to="`/note?notebookId=${curBook.id}&noteId=${note.id}`">
-          <span class="date">{{note.newUpdatedAt}}</span>
-          <span class="title">{{note.title}}</span>
+          <span class="date">{{ note.newUpdatedAt }}</span>
+          <span class="title">{{ note.title }}</span>
         </router-link>
       </li>
     </ul>
@@ -32,52 +32,54 @@
 </template>
 
 <script>
-import Notebooks from '../apis/notebooks';
 import Notes from '../apis/notes';
-import Bus from '../helpers/bus';
+import {mapGetters, mapMutations, mapActions} from 'vuex';
 
 export default {
-  data() {
-    return {
-      notebooks: [],
-      notes: [],
-      curBook: {}
-    };
+  computed: {
+    ...mapGetters([
+      'notebooks',
+      'curBook',
+      'notes',
+    ])
   },
 
   methods: {
+    ...mapMutations([
+      'setCurBook',
+      'setCurNote'
+    ]),
+
+    ...mapActions([
+      'getNotebooks',
+      'getNotes',
+      'addNote'
+    ]),
+
     handleCommand(notebookId) {
-      if(notebookId === 'trash') {
-        return this.$router.push({ path: '/trash'})
+      if (notebookId === 'trash') {
+        return this.$router.push({path: '/trash'});
       }
-      this.curBook = this.notebooks.find(notebook => notebook.id === notebookId)
-      Notes.getAll({ notebookId })
-        .then(res => {
-          this.notes = res.data
-          this.$emit('update:notes', this.notes)
-        })
+      this.setCurBook({curBookId: notebookId});
+      this.getNotes({notebookId});
     },
 
-    addNote() {
-      Notes.add({ notebookId: this.curBook.id })
-        .then(res => {
-          this.notes.unshift(res.data)
-        })
+    onAddNote() {
+      Notes.add({notebookId: this.curBook.id})
+        .then(() => {
+          this.addNote({notebookId: this.curBook.id});
+        });
     }
   },
 
   created() {
-    Notebooks.getAll()
-      .then(res => {
-        this.notebooks = res.data;
-        this.curBook = this.notebooks.find(notebook => notebook.id == this.$route.query.notebookId)
-          || this.notebooks[0] || {};
-        return Notes.getAll({notebookId: this.curBook.id});
+    this.getNotebooks()
+      .then(() => {
+        this.setCurBook({curBookId: this.$route.query.notebookId});
+        return this.getNotes({notebookId: this.curBook.id});
       })
-      .then(res => {
-        this.notes = res.data;
-        this.$emit('update:notes', this.notes)
-        Bus.$emit('update:notes', this.notes)
+      .then(() => {
+        this.setCurNote({curNoteId: this.$route.query.noteId});
       });
   },
 };
