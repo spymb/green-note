@@ -20,7 +20,7 @@ export default {
   },
 
   created() {
-    this.checkLogin('/login')
+    this.checkLogin()
   },
 };
 </script>

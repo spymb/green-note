@@ -81,7 +81,7 @@ export default {
   },
 
   created() {
-    this.checkLogin('/login');
+    this.checkLogin();
     this.getNotebooks();
   }
 };

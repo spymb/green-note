@@ -26,6 +26,10 @@ export default {
     onLogout() {
       this.$store.dispatch('logout')
     }
+  },
+
+  created() {
+    this.$store.dispatch('checkLogin')
   }
 };
 </script>

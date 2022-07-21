@@ -76,7 +76,8 @@ export default {
     onDeleteNote() {
       this.deleteNote({noteId: this.curNote.id})
         .then(() => {
-          this.$router.replace({path: `/note?/notebookId=${this.curNote.notebookId}`});
+          this.setCurNote()
+          this.$router.replace({path: `/note?notebookId=${this.curNote.notebookId}&noteId=${this.curNote.id}`});
         });
     },
 
@@ -91,7 +92,7 @@ export default {
   },
 
   created() {
-    this.checkLogin('/login');
+    this.checkLogin();
   },
 
   beforeRouteUpdate(to, from, next) {

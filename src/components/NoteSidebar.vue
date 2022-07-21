@@ -56,44 +56,39 @@ export default {
       'addNote'
     ]),
 
-    handleCommand(notebookId) {
-      if (notebookId === 'trash') {
-        return this.$router.push({path: '/trash'});
-      }
-      this.setCurBook({curBookId: notebookId});
-      this.getNotes({notebookId}).then(() => {
-        this.setCurNote()
+    reRoute(curBookId, noteIdObj) {
+      this.setCurBook({curBookId: curBookId});
+      this.getNotes({notebookId: this.curBook.id}).then(() => {
+        this.setCurNote(noteIdObj)
         this.$router.replace({
           path: '/note',
           query: {
+            notebookId: this.curBook.id,
             noteId: this.curNote.id,
-            notebookId: this.curBook.id
           }
         })
       })
     },
 
+    handleCommand(notebookId) {
+      if (notebookId === 'trash') {
+        return this.$router.push({path: '/trash'});
+      }
+      this.reRoute(notebookId, {})
+    },
+
     onAddNote() {
-      this.addNote({notebookId: this.curBook.id});
+      this.addNote({notebookId: this.curBook.id}).then(() => {
+        this.reRoute(this.curBook.id, {})
+      })
     }
   },
 
   created() {
     this.getNotebooks()
       .then(() => {
-        this.setCurBook({curBookId: this.$route.query.notebookId});
-        return this.getNotes({notebookId: this.curBook.id});
+        this.reRoute(this.$route.query.notebookId, {curNoteId: this.$route.query.noteId})
       })
-      .then(() => {
-        this.setCurNote({curNoteId: this.$route.query.noteId});
-        this.$router.replace({
-          path: '/note',
-          query: {
-            noteId: this.curNote.id,
-            notebookId: this.curBook.id
-          }
-        })
-      });
   },
 };
 </script>

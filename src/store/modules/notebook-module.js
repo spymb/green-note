@@ -33,7 +33,7 @@ const mutations = {
     state.notebooks = payload.notebooks
   },
 
-  setCurBook(state, payload) {
+  setCurBook(state, payload = {}) {
     state.curBookId = payload.curBookId
   }
 }
