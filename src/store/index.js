@@ -12,5 +12,6 @@ export default new Vuex.Store({
     notebook,
     note,
     auth,
+    trash
   }
 })

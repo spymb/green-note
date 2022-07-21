@@ -7,10 +7,10 @@
         <div>标题</div>
       </div>
       <ul class="notes">
-        <li>
-          <router-link :to="`/trash`">
-            <span class="date">星期五</span>
-            <span class="title">好快乐</span>
+        <li v-for="note in trashNotes">
+          <router-link :to="`/trash?noteId=${note.id}`">
+            <span class="date">{{note.newUpdatedAt}}</span>
+            <span class="title">{{note.title}}</span>
           </router-link>
         </li>
       </ul>
@@ -19,22 +19,20 @@
     <div class="note-detail-wrapper">
       <div class="note-detail">
         <div class="note-bar" v-if="true">
-          <span> 创建日期: 星期五</span>
+          <span> 创建日期: {{curTrashNote.newCreatedAt}}</span>
           <span> | </span>
-          <span> 更新日期: 星期六</span>
+          <span> 更新日期: {{curTrashNote.newUpdatedAt}}</span>
           <span> | </span>
-          <span> 所属笔记本: 笔记本一</span>
+          <span> 所属笔记本: {{belongTo}}</span>
 
-          <a class="btn action">恢复</a>
-          <a class="btn action">彻底删除</a>
+          <a class="btn action" @click="onRevert">恢复</a>
+          <a class="btn action" @click="onDelete">彻底删除</a>
         </div>
-
         <div class="note-title">
-          <span>搞起来</span>
+          <span>{{curTrashNote.title}}</span>
         </div>
-
         <div class="editor">
-          <div class="preview markdown-body"></div>
+          <div class="preview markdown-body" v-html="compiledMarkdown"></div>
         </div>
       </div>
     </div>
@@ -42,9 +40,59 @@
 </template>
 
 <script>
+import MarkdownIt from 'markdown-it'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
+
+let md = new MarkdownIt()
 
 export default {
+  computed: {
+    ...mapGetters([
+      'trashNotes',
+      'curTrashNote',
+      'belongTo'
+    ]),
 
+    compiledMarkdown () {
+      return md.render(this.curTrashNote.content||'')
+    }
+  },
+
+  methods: {
+    ...mapMutations([
+      'setCurTrashNote'
+    ]),
+
+    ...mapActions([
+      'checkLogin',
+      'deleteTrashNote',
+      'revertTrashNote',
+      'getTrashNotes',
+      'getNotebooks'
+    ]),
+
+    onDelete() {
+      this.deleteTrashNote({ noteId: this.curTrashNote.id })
+    },
+
+    onRevert() {
+      this.revertTrashNote({ noteId: this.curTrashNote.id })
+    }
+  },
+
+  created() {
+    this.checkLogin({ path: '/login' })
+    this.getNotebooks()
+    this.getTrashNotes()
+      .then(() => {
+        this.setCurTrashNote({ curTrashNoteId: this.$route.query.noteId })
+      })
+  },
+
+  beforeRouteUpdate (to, from, next) {
+    this.setCurTrashNote({ curTrashNoteId: to.query.noteId})
+    next()
+  }
 }
 </script>
 
