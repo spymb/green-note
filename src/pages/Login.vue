@@ -170,7 +170,7 @@ export default {
 
   .main {
     flex: 1;
-    background: #36bc64 url(../assets/bg.jpg) center center no-repeat;
+    background: #36bc64 url(../../static/img/bg.jpg) center center no-repeat;
     background-size: contain;
   }
 
