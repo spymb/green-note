@@ -10,23 +10,25 @@
 
           <div class="form">
 
-            <h3 @click="showRegister">创建账户</h3>
+            <h3 @click="showLogin">登录账户</h3>
             <transition name="slide">
-              <div v-bind:class="{show: isShowRegister}" class="register">
-                <input type="text" v-model="register.username" placeholder="用户名">
-                <input type="password" v-model="register.password" @keyup.enter="onRegister" placeholder="密码">
-                <p v-bind:class="{error: register.isError}"> {{ register.notice }}</p>
-                <div class="button" @click="onRegister">创建账号</div>
+              <div v-bind:class="{show: isShowLogin}" class="login">
+                <el-input type="text" v-model="login.username" placeholder="请输入用户名"></el-input>
+                <el-input type="password" v-model="login.password" @keyup.enter="onLogin"
+                          placeholder="请输入密码" show-password></el-input>
+                <p v-bind:class="{error: login.isError}"> {{ login.notice }}</p>
+                <div class="button" @click="onLogin">登录</div>
               </div>
             </transition>
 
-            <h3 @click="showLogin">登录</h3>
+            <h3 @click="showRegister">注册账户</h3>
             <transition name="slide">
-              <div v-bind:class="{show: isShowLogin}" class="login">
-                <input type="text" v-model="login.username" placeholder="输入用户名">
-                <input type="password" v-model="login.password" @keyup.enter="onLogin" placeholder="密码">
-                <p v-bind:class="{error: login.isError}"> {{ login.notice }}</p>
-                <div class="button" @click="onLogin"> 登录</div>
+              <div v-bind:class="{show: isShowRegister}" class="register">
+                <el-input type="text" v-model="register.username" placeholder="请输入用户名"></el-input>
+                <el-input type="password" v-model="register.password"
+                          @keyup.enter="onRegister" placeholder="请输入密码" show-password></el-input>
+                <p v-bind:class="{error: register.isError}"> {{ register.notice }}</p>
+                <div class="button" @click="onRegister">注册</div>
               </div>
             </transition>
 
@@ -52,13 +54,13 @@ export default {
       login: {
         username: '',
         password: '',
-        notice: '请输入用户名和密码',
+        notice: '',
         isError: false
       },
       register: {
         username: '',
         password: '',
-        notice: '创建账号后，请记住用户名和密码',
+        notice: '',
         isError: false
       }
     };
@@ -168,7 +170,7 @@ export default {
 
   .main {
     flex: 1;
-    background: #36bc64 url(//cloud.hunger-valley.com/17-12-13/38476998.jpg-middle) center center no-repeat;
+    background: #36bc64 url(../assets/bg.jpg) center center no-repeat;
     background-size: contain;
   }
 
@@ -178,6 +180,7 @@ export default {
     overflow: hidden;
 
     h3 {
+      text-align: center;
       padding: 10px 20px;
       margin-top: -1px;
       font-weight: normal;
@@ -210,7 +213,7 @@ export default {
       transition: height .4s;
 
       &.show {
-        height: 193px;
+        height: 165px;
       }
 
       input {
@@ -225,7 +228,15 @@ export default {
         font-size: 14px;
         margin-top: 10px;
       }
-
+      .el-input {
+        display: block;
+      }
+      .el-input .el-input__clear {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+      }
       input:focus {
         border: 3px solid #9dcaf8;
       }

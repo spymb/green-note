@@ -16,8 +16,6 @@
 
 <script>
 import Avatar from './Avatar.vue';
-import Auth from '../apis/auth'
-import Bus from '../helpers/bus';
 
 export default {
   components: {Avatar},
@@ -38,7 +36,7 @@ export default {
 
 #sidebar {
   position: relative;
-  width: 56px;
+  width: 66px;
   text-align: center;
   background-color: #2c333c;
 
@@ -46,7 +44,7 @@ export default {
     margin-top: 15px;
 
     a {
-      padding: 6px 0;
+      padding: 10px 0;
       display: block;
     }
 
@@ -65,6 +63,7 @@ export default {
   }
 
   .iconfont {
+    font-size: 20px;
     color: #fff;
   }
 }

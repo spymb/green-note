@@ -1,7 +1,10 @@
 <template>
   <div class="detail" id="notebooks">
     <header>
-      <a href="#" class="btn" @click.prevent="onCreate"><i class="iconfont icon-plus"></i> 新建笔记本</a>
+      <a href="#" class="btn" @click.prevent="onCreate">
+        <i class="iconfont icon-plus"></i>
+        新建笔记本
+      </a>
     </header>
 
     <main>
