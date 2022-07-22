@@ -11,7 +11,9 @@
         <el-dropdown-item v-for="notebook in notebooks" :command="notebook.id" :key="notebook.id">
           {{ notebook.title }}
         </el-dropdown-item>
-        <el-dropdown-item command="trash">回收站</el-dropdown-item>
+        <div v-show="notebooks.length === 0">
+          <el-dropdown-item command="trash">去添加笔记本吧</el-dropdown-item>
+        </div>
       </el-dropdown-menu>
     </el-dropdown>
 
@@ -59,36 +61,40 @@ export default {
     reRoute(curBookId, noteIdObj) {
       this.setCurBook({curBookId: curBookId});
       this.getNotes({notebookId: this.curBook.id}).then(() => {
-        this.setCurNote(noteIdObj)
+        this.setCurNote(noteIdObj);
         this.$router.replace({
           path: '/note',
           query: {
             notebookId: this.curBook.id,
             noteId: this.curNote.id,
           }
-        })
-      })
+        });
+      });
     },
 
     handleCommand(notebookId) {
-      if (notebookId === 'trash') {
-        return this.$router.push({path: '/trash'});
-      }
-      this.reRoute(notebookId, {})
+      this.reRoute(notebookId, {});
     },
 
     onAddNote() {
-      this.addNote({notebookId: this.curBook.id}).then(() => {
-        this.reRoute(this.curBook.id, {})
-      })
+      if (this.curBook.id) {
+        this.addNote({notebookId: this.curBook.id})
+          .then(() => {
+            this.reRoute(this.curBook.id, {});
+          })
+      } else {
+        this.$message.warning({message: '请先创建笔记本'});
+      }
     }
   },
 
   created() {
     this.getNotebooks()
       .then(() => {
-        this.reRoute(this.$route.query.notebookId, {curNoteId: this.$route.query.noteId})
-      })
+        if (this.curBook.id) {
+          this.reRoute(this.$route.query.notebookId, {curNoteId: this.$route.query.noteId})
+        }
+      });
   },
 };
 </script>

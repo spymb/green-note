@@ -9,13 +9,15 @@
 
     <main>
       <div class="layout">
-        <h3>笔记本列表({{ notebooks.length }})</h3>
+        <h3 v-show="notebooks.length !== 0">笔记本列表({{ notebooks.length }})</h3>
+        <div class="empty" v-show="notebooks.length === 0">笔记本是空的，创建一个吧</div>
+
         <div class="book-list">
           <router-link v-for="book in notebooks" :to="`/note?notebookId=${book.id}`" class="notebook"
                        :key="book.createdAt">
             <div>
               <span class="iconfont icon-notebook"></span> {{ book.title }}
-              <span>{{ book.noteCounts }}</span>
+
               <span class="action" @click.stop.prevent="onEditTitle(book)">编辑</span>
               <span class="action" @click.stop.prevent="onDelete(book)">删除</span>
               <span class="date">{{ book.newCreatedAt }}</span>
@@ -55,7 +57,8 @@ export default {
       })
         .then(({value}) => {
           this.addNotebook({title: value});
-        });
+        })
+        .catch(() => {});
     },
 
     onDelete(notebook) {
@@ -66,7 +69,8 @@ export default {
       })
         .then(() => {
           this.deleteNotebook({notebookId: notebook.id});
-        });
+        })
+        .catch(() => {});
     },
 
     onEditTitle(notebook) {

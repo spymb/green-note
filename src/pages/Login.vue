@@ -14,9 +14,9 @@
             <transition name="slide">
               <div v-bind:class="{show: isShowLogin}" class="login">
                 <el-input type="text" v-model="login.username" placeholder="请输入用户名"></el-input>
-                <el-input type="password" v-model="login.password" @keyup.enter="onLogin"
+                <el-input type="password" v-model="login.password" @keyup.enter.native="onLogin"
                           placeholder="请输入密码" show-password></el-input>
-                <p v-bind:class="{error: login.isError}"> {{ login.notice }}</p>
+                <p class="notice" v-bind:class="{error: login.isError}"> {{ login.notice }}</p>
                 <div class="button" @click="onLogin">登录</div>
               </div>
             </transition>
@@ -26,8 +26,8 @@
               <div v-bind:class="{show: isShowRegister}" class="register">
                 <el-input type="text" v-model="register.username" placeholder="请输入用户名"></el-input>
                 <el-input type="password" v-model="register.password"
-                          @keyup.enter="onRegister" placeholder="请输入密码" show-password></el-input>
-                <p v-bind:class="{error: register.isError}"> {{ register.notice }}</p>
+                          @keyup.enter.native="onRegister" placeholder="请输入密码" show-password></el-input>
+                <p class="notice" v-bind:class="{error: register.isError}"> {{ register.notice }}</p>
                 <div class="button" @click="onRegister">注册</div>
               </div>
             </transition>
@@ -54,13 +54,13 @@ export default {
       login: {
         username: '',
         password: '',
-        notice: '',
+        notice: '欢迎使用 Green Note!',
         isError: false
       },
       register: {
         username: '',
         password: '',
-        notice: '',
+        notice: '欢迎使用 Green Note!',
         isError: false
       }
     };
@@ -111,7 +111,7 @@ export default {
     onLogin() {
       if (!/^[\w\u4e00-\u9fa5]{3,15}$/.test(this.login.username)) {
         this.login.isError = true;
-        this.login.notice = '用户名3~15个字符，仅限于字母数字下划线中文';
+        this.login.notice = '用户名3~15个字符，仅限于字母、数字、下划线、中文';
         return;
       }
       if (!/^.{6,16}$/.test(this.login.password)) {
@@ -139,7 +139,9 @@ export default {
 </script>
 
 <style lang="less">
-
+.notice {
+  text-align: center;
+}
 .modal-mask {
   position: fixed;
   z-index: 100;
@@ -213,7 +215,7 @@ export default {
       transition: height .4s;
 
       &.show {
-        height: 165px;
+        height: 200px;
       }
 
       input {

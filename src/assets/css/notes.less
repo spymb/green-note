@@ -16,25 +16,31 @@
   }
 
   .note-bar {
-    padding: 4px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 20px;
     border-bottom: 1px solid #eee;
-    &:after {
-      content:'';
-      display: block;
-      clear: both;
-    }
+
     span {
-      font-size: 12px;
+      font-size: 13px;
       color: #999;
-      margin-right: 4px;
-    }
-    .iconfont{
-      float: right;
-      margin-left: 4px;
-      font-size: 18px;
-      cursor: pointer;
     }
 
+    .el-icon-delete:before {
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .el-icon-switch-button:before {
+      cursor: pointer;
+      margin-right: 10px;
+      font-size: 16px;
+    }
+    .el-icon-full-screen:before {
+      cursor: pointer;
+      margin-right: 10px;
+      font-size: 16px;
+    }
   }
 
   .note-title{

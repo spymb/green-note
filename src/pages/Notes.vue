@@ -3,15 +3,22 @@
     <note-sidebar @update:notes="val => notes = val"></note-sidebar>
 
     <div class="note-detail-wrapper">
-      <div class="note-empty" v-show="!curNote.id">请选择笔记</div>
+      <div class="note-empty" v-show="this.curBook.id && !this.curNote.id">请添加笔记</div>
+      <div class="note-empty" v-show="!this.curBook.id">请先创建笔记本</div>
 
       <div class="note-detail" v-show="curNote.id">
         <div class="note-bar">
-          <span> 创建时间: {{ curNote.newCreatedAt }}</span>
-          <span> 更新时间: {{ curNote.newUpdatedAt }}</span>
-          <span> {{ statusText }}</span>
-          <span class="iconfont icon-delete" @click="onDeleteNote"></span>
-          <span class="iconfont icon-fullscreen" @click="isShowContent = !isShowContent"></span>
+          <span>
+            <span> 创建时间: {{ curNote.newCreatedAt }}</span>
+            <span> 更新时间: {{ curNote.newUpdatedAt }}</span>
+            <span> {{ statusText }}</span>
+          </span>
+
+          <span>
+            <span class="el-icon-switch-button" v-if="isShowContent" @click="isShowContent = !isShowContent"></span>
+            <span class="el-icon-full-screen" v-if="!isShowContent" @click="isShowContent = !isShowContent"></span>
+            <span class="el-icon-delete" @click="onDeleteNote"></span>
+          </span>
         </div>
 
         <div class="note-title">
@@ -47,14 +54,15 @@ export default {
   data() {
     return {
       statusText: '笔记未改动',
-      isShowContent: true
+      isShowContent: true,
     };
   },
 
   computed: {
     ...mapGetters([
       'notes',
-      'curNote'
+      'curNote',
+      'curBook'
     ]),
 
     previewContent() {
@@ -76,8 +84,13 @@ export default {
     onDeleteNote() {
       this.deleteNote({noteId: this.curNote.id})
         .then(() => {
-          this.setCurNote()
-          this.$router.replace({path: `/note?notebookId=${this.curNote.notebookId}&noteId=${this.curNote.id}`});
+          this.setCurNote();
+          console.log(this.curNote.notebookId);
+          if(this.curNote.id !== undefined && this.curNote.notebookId !== undefined) {
+            this.$router.replace({path: `/note?notebookId=${this.curNote.notebookId}&noteId=${this.curNote.id}`});
+          } else {
+            this.$router.replace({path: `/note`});
+          }
         });
     },
 
@@ -88,7 +101,7 @@ export default {
         }).catch(() => {
         this.statusText = '保存出错';
       });
-    }, 300),
+    }, 3000),
   },
 
   created() {
@@ -104,6 +117,7 @@ export default {
 
 <style lang="less">
 @import url(../assets/css/notes.less);
+
 #note {
   display: flex;
   align-items: stretch;

@@ -15,18 +15,23 @@
         </li>
       </ul>
     </div>
-
     <div class="note-detail-wrapper">
-      <div class="note-detail">
-        <div class="note-bar" v-if="true">
-          <span> 创建日期: {{ curTrashNote.newCreatedAt }}</span>
-          <span> | </span>
-          <span> 更新日期: {{ curTrashNote.newUpdatedAt }}</span>
-          <span> | </span>
-          <span> 所属笔记本: {{ belongTo }}</span>
+      <div class="note-empty" v-show="!this.curTrashNote.id">是空的哦，去写笔记吧</div>
 
-          <a class="btn action" @click="onRevert">恢复</a>
-          <a class="btn action" @click="onDelete">彻底删除</a>
+      <div class="note-detail">
+        <div class="note-bar" v-show="this.curTrashNote.id">
+          <span>
+            <span> 创建日期: {{ curTrashNote.newCreatedAt }}</span>
+            <span> | </span>
+            <span> 更新日期: {{ curTrashNote.newUpdatedAt }}</span>
+            <span> | </span>
+            <span> 所属笔记本: {{ belongTo }}</span>
+          </span>
+
+          <span>
+            <a class="btn action" @click="onRevert">恢复</a>
+            <a class="btn action" @click="onDelete">彻底删除</a>
+          </span>
         </div>
         <div class="note-title">
           <span>{{ curTrashNote.title }}</span>
@@ -90,7 +95,8 @@ export default {
         })
         .then(() => {
           this.reRoute();
-        });
+        })
+        .catch(() => {});
     },
 
     onRevert() {
@@ -131,8 +137,7 @@ export default {
       float: right;
       margin-left: 10px;
       padding: 2px 4px;
-      font-size: 12px;
-
+      font-size: 13px;
     }
   }
 }
