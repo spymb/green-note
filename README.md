@@ -31,5 +31,4 @@ yarn dev
 ```
 yarn build
 ```
-<p>一款基于 <strong></strong> + <strong>JavaScript</strong> 的单页面笔记应用。主要适配 PC 及平板。</p>
         
